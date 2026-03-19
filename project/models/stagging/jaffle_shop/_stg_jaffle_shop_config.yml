@@ -1,0 +1,50 @@
+models:
+  - name: stg_jaffle_shop_customers
+    description: "This staging model selects all columns from the raw customers table and applies basic transformations to clean the data."
+    columns:
+      - name: customer_id
+        description: "Unique identifier for each customer."
+        tests:
+          - not_null
+          - unique
+      - name: first_name
+        description: "Customer's first name."
+      - name: last_name
+        description: "Customer's last name."
+      - name: email
+        description: "Customer's email address."
+      - name: created_at
+        description: "Timestamp when the customer record was created."
+  - name: stg_jaffle_shop_orders
+    description: "This staging model selects all columns from the raw orders table and applies basic transformations to clean the data."
+    columns:
+      - name: order_id
+        description: "Unique identifier for each order."
+        tests:
+          - not_null
+          - unique
+      - name: customer_id
+        description: "Identifier for the customer who placed the order."
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_jaffle_shop_customers')
+                field: customer_id
+      - name: order_date
+        description: "Date when the order was placed."
+      - name: status
+        description: "Current status of the order (e.g., 'completed', 'pending','canceled')."
+        tests:
+          - accepted_values:
+              arguments:
+                values:
+                  [
+                    "completed",
+                    "pending",
+                    "canceled",
+                    "returned",
+                    "shipped",
+                    "delivered",
+                    "placed",
+                    "return_pending",
+                  ]
